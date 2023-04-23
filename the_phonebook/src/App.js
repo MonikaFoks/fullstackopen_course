@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personsService from './services/persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
@@ -12,10 +12,10 @@ const App = () => {
   const [nameFilter, setNameFilter] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personsService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
 
@@ -45,6 +45,40 @@ const App = () => {
     console.log(JSON.stringify(nameFilter).length !== 0)
   }
 
+  const deletePerson = (person) => {
+    if(window.confirm(`Are you sure to delete ${person.name}?`)){
+      personsService
+      .deletePerson(person.id)
+      .then(
+        setPersons(persons.filter(n => n.id != person.id))
+      )
+      .catch(error => {
+        alert(
+          `Contact '${person.name}' was already deleted from server`
+        )
+        setPersons(persons.filter(n => n.id !== person.id))
+      })
+    }
+  }
+
+  const updateNumber = (personToUpdate, updatedPerson) => {
+    if(window.confirm(`${personToUpdate.name} is already in the book, do you want to update the number?`)){
+      personsService
+      .updatePersonsNumber(personToUpdate.id, updatedPerson)
+      .then(returnedPerson => {
+        setPersons(persons.map(person => person.id != personToUpdate.id ? person : returnedPerson))
+        setNewName('')
+        setNewNumber('')
+      })
+      .catch(error => {
+        alert(
+          `Contact '${personToUpdate.name}' was already deleted from server`
+        )
+        setPersons(persons.filter(n => n.id !== personToUpdate.id))
+      })
+    }
+  }
+
   const addName = (event) => {
     event.preventDefault()
     console.log('button clicked', event.target)
@@ -62,13 +96,18 @@ const App = () => {
     // console.log(nameAlreadyExists(personObject.name, persons))
 
     if(!nameAlreadyExists(personObject.name, persons)){
-      //console.log(personObject.name)
-      setPersons(persons.concat(personObject))
-      setNewName('')
-      setNewNumber('')
+      personsService
+      .create(personObject)
+      .then(newPerson => {
+        setPersons(persons.concat(newPerson))
+        setNewName('')
+        setNewNumber('')
+      })
     }
     else{
-      window.alert(`${newName} is already added to phonebook`)
+      const personToUpdate = persons.find(n => n.name === personObject.name)
+      const updatedPerson = {...personToUpdate, number: personObject.number}
+      updateNumber(personToUpdate, updatedPerson)
     }
   }
 
@@ -87,7 +126,7 @@ const App = () => {
         handleNumberChange={handleNumberChange}>
       </PersonForm>
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow}></Persons>
+      <Persons personsToShow={personsToShow} deletePerson={deletePerson}></Persons>
     </div>
   )
 }
