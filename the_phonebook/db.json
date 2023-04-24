@@ -1,24 +1,74 @@
 {
-  "persons":[
-    { 
-      "name": "Arto Hellas", 
-      "number": "040-123456",
-      "id": 1
-    },
-    { 
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523",
-      "id": 2
-    },
-    { 
-      "name": "Dan Abramov", 
+  "persons": [
+    {
+      "name": "Dan Abramov",
       "number": "12-43-234345",
       "id": 3
     },
-    { 
-      "name": "Mary Poppendieck", 
+    {
+      "name": "Mary Poppendieck",
       "number": "39-23-6423122",
       "id": 4
+    },
+    {
+      "name": "Karol",
+      "number": "28194784",
+      "important": true,
+      "id": 6
+    },
+    {
+      "name": "Monika",
+      "number": "82917",
+      "important": true,
+      "id": 8
+    },
+    {
+      "name": "Oas",
+      "number": "281937",
+      "important": true,
+      "id": 9
+    },
+    {
+      "name": "Koral",
+      "number": "`89372948",
+      "important": false,
+      "id": 10
+    },
+    {
+      "name": "Maja",
+      "number": "8921478",
+      "important": true,
+      "id": 11
+    },
+    {
+      "name": "Kinga",
+      "number": "8214687",
+      "important": true,
+      "id": 1
+    },
+    {
+      "name": "Kinia",
+      "number": "812748",
+      "important": true,
+      "id": 2
+    },
+    {
+      "name": "Ania",
+      "number": "271864744",
+      "important": true,
+      "id": 12
+    },
+    {
+      "name": "Aaa",
+      "number": "81294718",
+      "important": false,
+      "id": 5
+    },
+    {
+      "name": "Aaaaaaaa",
+      "number": "1298479",
+      "important": true,
+      "id": 13
     }
   ]
 }

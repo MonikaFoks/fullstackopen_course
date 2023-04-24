@@ -3,13 +3,15 @@ import personsService from './services/persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
-
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
+  const [notification, setNotification] = useState(null)
+  const [errorNotification, setErrorNotification] = useState(null)
 
   useEffect(() => {
     personsService
@@ -53,9 +55,10 @@ const App = () => {
         setPersons(persons.filter(n => n.id != person.id))
       )
       .catch(error => {
-        alert(
-          `Contact '${person.name}' was already deleted from server`
-        )
+        setErrorNotification(`${person.name} was already deleted.`)
+        setTimeout(() => {
+          setErrorNotification(null)
+        }, 5000)
         setPersons(persons.filter(n => n.id !== person.id))
       })
     }
@@ -71,12 +74,23 @@ const App = () => {
         setNewNumber('')
       })
       .catch(error => {
-        alert(
-          `Contact '${personToUpdate.name}' was already deleted from server`
-        )
+        setErrorNotification(`${personToUpdate.name} was already deleted.`)
+        setTimeout(() => {
+          setErrorNotification(null)
+        }, 5000)
         setPersons(persons.filter(n => n.id !== personToUpdate.id))
       })
     }
+  }
+
+  const setId = () =>{
+    let id = 1
+    while(persons.find(n => n.id === id)){
+      id++
+      console.log(id)
+    }
+    console.log(`ID: ${id}`)
+    return id
   }
 
   const addName = (event) => {
@@ -88,12 +102,12 @@ const App = () => {
       name: newName,
       number: newNumber,
       important: Math.random() < 0.5,
-      id: persons.length+1,
+      id: setId(),
     }
 
-    // console.log("Name not JSONd: ", personObject.name)
-    // console.log("Name JSONd: ", JSON.stringify(personObject.name))
-    // console.log(nameAlreadyExists(personObject.name, persons))
+    console.log("Name not JSONd: ", personObject.name)
+    console.log("Name JSONd: ", JSON.stringify(personObject.name))
+    console.log(nameAlreadyExists(personObject.name, persons))
 
     if(!nameAlreadyExists(personObject.name, persons)){
       personsService
@@ -102,6 +116,10 @@ const App = () => {
         setPersons(persons.concat(newPerson))
         setNewName('')
         setNewNumber('')
+        setNotification(`Added ${newPerson.name} to the phonebook.`)
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000)
       })
     }
     else{
@@ -116,6 +134,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification} color={'green'}/>
+      <Notification message={errorNotification} color={'red'}/>
       <Filter nameFilter={nameFilter} handleNameFilter={handleNameFilter}></Filter>
       <h2>Add new</h2>
       <PersonForm
